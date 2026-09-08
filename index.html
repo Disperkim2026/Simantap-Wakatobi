@@ -447,6 +447,72 @@
         }
 
         function logout() { location.reload(); }
+// =================================================================
+// FUNGSI POPULATE MASTER & DROPDOWN FILTER
+// =================================================================
+function populateMasterSelects() {
+    let dSel = document.getElementById("mUser_desa");
+    if(dSel) dSel.innerHTML = masterDB.desa.map(d => `<option value="${d.nama}">${d.nama} (${d.kec})</option>`).join('');
+    
+    initDropdownFilter('dashKec', 'dashDesa');
+    initDropdownFilter('fKecRumah', 'fDesaRumah');
+    initDropdownFilter('fKecRTLH', 'fDesaRTLH');
+    initDropdownFilter('fKecBacklog', 'fDesaBacklog');
+    initDropdownFilter('fKecBantuan', 'fDesaBantuan');
+    initDropdownFilter('petaKec', 'petaDesa');
+    initDropdownFilter('repKec', 'repDesa');
+
+    populateSelectOptions('mR_jk', masterDB.jk);
+    populateSelectOptions('mR_pekerjaan', masterDB.pekerjaan);
+    populateSelectOptions('mR_pendidikan', masterDB.pendidikan);
+    populateSelectOptions('mR_penghasilan', masterDB.penghasilan);
+    populateSelectOptions('mR_kepemilikan', masterDB.kepemilikan);
+    populateSelectOptions('mR_air', masterDB.air);
+    populateSelectOptions('mR_listrik', masterDB.listrik);
+    
+    populateSelectOptions('mB_jk', masterDB.jk);
+    populateSelectOptions('mB_jenis', masterDB.jenisbacklog);
+    populateSelectOptions('mB_aset', masterDB.asetbacklog);
+
+    populateSelectOptions('mBnt_program', masterDB.program);
+    populateSelectOptions('mBnt_sumber', masterDB.sumberdana);
+    populateSelectOptions('mBntBl_program', masterDB.program);
+    populateSelectOptions('mBntBl_sumber', masterDB.sumberdana);
+    
+    populateSelectOptions('mBntRTLH_program', masterDB.program);
+    populateSelectOptions('mBntRTLH_sumber', masterDB.sumberdana);
+
+    initDropdownFilter('mR_kec', 'mR_desa');
+    initDropdownFilter('mB_kec', 'mB_desa');
+    populateRumahBantuanSelect();
+}
+
+function populateRumahBantuanSelect() {
+    let el = document.getElementById('mBnt_rumahId');
+    if(!el) return;
+    el.innerHTML = `<option value="">-- Pilih Rumah / Warga --</option>` + dbRumah.map(r => `<option value="${r.id}" data-nik="${r.nik}" data-nokk="${r.nokk}">${r.kk} (NIK: ${r.nik})</option>`).join('');
+}
+
+function initDropdownFilter(kecElemId, desaElemId) {
+    let kElem = document.getElementById(kecElemId);
+    if(!kElem) return;
+    kElem.innerHTML = `<option value="">-- Semua Kecamatan --</option>` + masterDB.kecamatan.map(k => `<option value="${k}">${k}</option>`).join('');
+    onKecamatanFilterChange(kecElemId, desaElemId);
+}
+
+function onKecamatanFilterChange(kecElemId, desaElemId) {
+    let kecVal = document.getElementById(kecElemId) ? document.getElementById(kecElemId).value : '';
+    let dElem = document.getElementById(desaElemId);
+    if(!dElem) return;
+    
+    let filteredDesa = kecVal ? masterDB.desa.filter(d => d.kec === kecVal) : masterDB.desa;
+    dElem.innerHTML = `<option value="">-- Semua Desa/Kelurahan --</option>` + filteredDesa.map(d => `<option value="${d.nama}">${d.nama}</option>`).join('');
+}
+
+function populateSelectOptions(elemId, arrayList) {
+    let el = document.getElementById(elemId);
+    if(el && arrayList) el.innerHTML = arrayList.map(item => `<option value="${item}">${item}</option>`).join('');
+}
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
