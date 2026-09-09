@@ -1071,7 +1071,8 @@
         // ================= SUPABASE CONFIGURATION =================
         const SUPABASE_URL = 'YOUR_SUPABASE_URL';
         const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Menggunakan nama 'supabaseClient' agar tidak bentrok dengan variabel global 'supabase' dari CDN
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Override Notifikasi Bawaan Browser (alert) ke SweetAlert2
         window.alert = function(msg) {
@@ -1209,7 +1210,7 @@
                     for (let item of items) {
                         try {
                             let table = storeName.replace('pending_', '');
-                            let { error } = await supabase.from(table).upsert(item);
+                            let { error } = await supabaseClient.from(table).upsert(item);
                             if (!error) removeOfflinePending(storeName, item.id);
                         } catch (err) {
                             console.error("Gagal sinkronisasi offline:", err);
@@ -1497,12 +1498,12 @@
             showLoading();
             try {
                 const [resRumah, resBantuan, resBacklog, resPengguna, resSettings, resMaster] = await Promise.all([
-                    supabase.from('rumah').select('*'),
-                    supabase.from('bantuan').select('*'),
-                    supabase.from('backlog').select('*'),
-                    supabase.from('pengguna').select('*'),
-                    supabase.from('settings').select('*'),
-                    supabase.from('master').select('*')
+                    supabaseClient.from('rumah').select('*'),
+                    supabaseClient.from('bantuan').select('*'),
+                    supabaseClient.from('backlog').select('*'),
+                    supabaseClient.from('pengguna').select('*'),
+                    supabaseClient.from('settings').select('*'),
+                    supabaseClient.from('master').select('*')
                 ]);
 
                 dbRumah = resRumah.data || [];
@@ -1681,7 +1682,7 @@
 
             showLoading();
             try {
-                const { data, error } = await supabase.from('pengguna').select('*').eq('username', user).eq('password', pass).single();
+                const { data, error } = await supabaseClient.from('pengguna').select('*').eq('username', user).eq('password', pass).single();
                 hideLoading();
 
                 if (data) {
@@ -1991,14 +1992,14 @@
                         let byteArray = new Uint8Array(byteNumbers);
                         let blob = new Blob([byteArray], { type: 'image/jpeg' });
 
-                        let { data, error } = await supabase.storage.from('photos').upload(fileName, blob, {
+                        let { data, error } = await supabaseClient.storage.from('photos').upload(fileName, blob, {
                             contentType: 'image/jpeg',
                             upsert: true
                         });
 
                         if (error) throw error;
 
-                        let { data: publicUrlData } = supabase.storage.from('photos').getPublicUrl(fileName);
+                        let { data: publicUrlData } = supabaseClient.storage.from('photos').getPublicUrl(fileName);
                         hideLoading();
 
                         document.getElementById(targetInputId).value = publicUrlData.publicUrl;
@@ -2462,18 +2463,18 @@
                         let byteArray = new Uint8Array(byteNumbers);
                         let blob = new Blob([byteArray], { type: 'image/jpeg' });
 
-                        let { data, error } = await supabase.storage.from('photos').upload(fileName, blob, {
+                        let { data, error } = await supabaseClient.storage.from('photos').upload(fileName, blob, {
                             contentType: 'image/jpeg',
                             upsert: true
                         });
 
                         if (error) throw error;
 
-                        let { data: publicUrlData } = supabase.storage.from('photos').getPublicUrl(fileName);
+                        let { data: publicUrlData } = supabaseClient.storage.from('photos').getPublicUrl(fileName);
                         let targetB = dbBantuan.find(item => String(item.id) === String(bId));
                         if(targetB) {
                             targetB.bukti = publicUrlData.publicUrl;
-                            await supabase.from('bantuan').upsert(targetB);
+                            await supabaseClient.from('bantuan').upsert(targetB);
                         }
                         bootstrap.Modal.getInstance(document.getElementById('modalUploadBuktiRow')).hide();
                         alert("Foto bukti berhasil diunggah dengan nama file:\n" + fileName);
@@ -2611,7 +2612,7 @@
 
             showLoading();
             try {
-                let { error } = await supabase.from('rumah').upsert(payload);
+                let { error } = await supabaseClient.from('rumah').upsert(payload);
                 hideLoading();
                 if (error) throw error;
             } catch(err) {
@@ -2640,7 +2641,7 @@
                     if (!navigator.onLine) return;
 
                     showLoading();
-                    await supabase.from('rumah').delete().eq('id', id);
+                    await supabaseClient.from('rumah').delete().eq('id', id);
                     hideLoading();
                 }
             });
@@ -2705,7 +2706,7 @@
 
             showLoading();
             try {
-                let { error } = await supabase.from('backlog').upsert(payload);
+                let { error } = await supabaseClient.from('backlog').upsert(payload);
                 hideLoading();
                 if (error) throw error;
             } catch(err) {
@@ -2734,7 +2735,7 @@
                     if (!navigator.onLine) return;
 
                     showLoading();
-                    await supabase.from('backlog').delete().eq('id', id);
+                    await supabaseClient.from('backlog').delete().eq('id', id);
                     hideLoading();
                 }
             });
@@ -2779,9 +2780,9 @@
 
             showLoading();
             try {
-                await supabase.from('backlog').delete().eq('id', bId);
-                await supabase.from('rumah').upsert(rumahPayload);
-                await supabase.from('bantuan').upsert(bantuanPayload);
+                await supabaseClient.from('backlog').delete().eq('id', bId);
+                await supabaseClient.from('rumah').upsert(rumahPayload);
+                await supabaseClient.from('bantuan').upsert(bantuanPayload);
                 hideLoading();
             } catch(err) {
                 hideLoading();
@@ -2851,8 +2852,8 @@
 
             showLoading();
             try {
-                await supabase.from('rumah').upsert(updatedRumah);
-                await supabase.from('bantuan').upsert(bantuanPayload);
+                await supabaseClient.from('rumah').upsert(updatedRumah);
+                await supabaseClient.from('bantuan').upsert(bantuanPayload);
                 hideLoading();
             } catch(err) {
                 hideLoading();
@@ -2902,7 +2903,7 @@
 
             showLoading();
             try {
-                await supabase.from('bantuan').upsert(payload);
+                await supabaseClient.from('bantuan').upsert(payload);
                 hideLoading();
             } catch(err) {
                 hideLoading();
@@ -3106,7 +3107,7 @@
             try {
                 for (let i = 0; i < totalData; i += chunkSize) {
                     let chunk = formattedList.slice(i, i + chunkSize);
-                    let { error } = await supabase.from(targetTable).upsert(chunk);
+                    let { error } = await supabaseClient.from(targetTable).upsert(chunk);
                     if (error) throw error;
                 }
                 
@@ -3218,9 +3219,9 @@
             showLoading();
             try {
                 if (namaLama) {
-                    await supabase.from('master').delete().eq('kategori', activeMasterTab).eq('nama_item', namaLama);
+                    await supabaseClient.from('master').delete().eq('kategori', activeMasterTab).eq('nama_item', namaLama);
                 }
-                await supabase.from('master').insert({ kategori: activeMasterTab, nama_item: namaBaru, nilai_kode: nilai });
+                await supabaseClient.from('master').insert({ kategori: activeMasterTab, nama_item: namaBaru, nilai_kode: nilai });
                 hideLoading();
             } catch(err) {
                 hideLoading();
@@ -3249,7 +3250,7 @@
                     populateMasterSelects();
 
                     showLoading();
-                    await supabase.from('master').delete().eq('kategori', cat).eq('nama_item', item);
+                    await supabaseClient.from('master').delete().eq('kategori', cat).eq('nama_item', item);
                     hideLoading();
                 }
             });
@@ -3290,7 +3291,7 @@
             renderPenggunaTable();
 
             showLoading();
-            await supabase.from('pengguna').upsert(payload);
+            await supabaseClient.from('pengguna').upsert(payload);
             hideLoading();
         }
 
@@ -3310,7 +3311,7 @@
                     renderPenggunaTable();
 
                     showLoading();
-                    await supabase.from('pengguna').delete().eq('id', id);
+                    await supabaseClient.from('pengguna').delete().eq('id', id);
                     hideLoading();
                 }
             });
@@ -3421,7 +3422,7 @@
             showLoading();
             try {
                 let upsertData = Object.keys(settingsObj).map(key => ({ key: key, value: settingsObj[key] }));
-                await supabase.from('settings').upsert(upsertData);
+                await supabaseClient.from('settings').upsert(upsertData);
                 hideLoading();
                 alert("Pengaturan Berhasil Disimpan!");
             } catch(err) {
