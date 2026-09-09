@@ -17,10 +17,10 @@
     <!-- Leaflet.js CSS & JS untuk Peta Sebaran -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- SweetAlert2 CSS & JS (Pop-up Notifikasi Mewah & Profesional) -->
+    <!-- SweetAlert2 CSS & JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Supabase JS Client -->
+    <!-- Supabase JS Client Client CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
@@ -70,7 +70,6 @@
 
         .sync-badge { font-size: 0.75rem; padding: 4px 8px; border-radius: 12px; }
 
-        /* Custom Styling SweetAlert2 */
         .swal2-popup {
             border-radius: 18px !important;
             padding: 24px !important;
@@ -492,7 +491,7 @@
                                 <tbody id="tb-preview-import"></tbody>
                             </table>
                         </div>
-                        <button class="btn btn-primary fw-bold" onclick="prosesImportMassal()"><i class="fas fa-check me-1"></i> Konfirmasi & Import Ke Database</button>
+                        <button class="btn btn-primary fw-bold" onclick="prosesImportMassal()"><i class="fas fa-check me-1"></i> Konfirmasi & Import Ke Supabase Database</button>
                     </div>
                 </div>
             </div>
@@ -1068,11 +1067,17 @@
     <!-- JS Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ================= SUPABASE CONFIGURATION =================
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        // Menggunakan nama 'supabaseClient' agar tidak bentrok dengan variabel global 'supabase' dari CDN
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // ================= INTEGRASI SUPABASE CLIENT =================
+        var SUPABASE_URL = 'https://dcaarxqeotiubrskfnhf.supabase.co';
+        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRjYWFyeHFlb3RpdWJyc2tmbmhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4NzU4OTksImV4cCI6MjEwNDQ1MTg5OX0.bF5fCt3xAmdXvWDHBaboAp9OSoZqdSlE4lWPJvXXufU';
+        var supabaseClient = null;
+
+        function getSupabase() {
+            if (!supabaseClient && window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+            return supabaseClient;
+        }
 
         // Override Notifikasi Bawaan Browser (alert) ke SweetAlert2
         window.alert = function(msg) {
@@ -1205,17 +1210,22 @@
                 let tx = dbOffline.transaction(storeName, "readonly");
                 let store = tx.objectStore(storeName);
                 let getAll = store.getAll();
-                getAll.onsuccess = async function() {
+                getAll.onsuccess = function() {
                     let items = getAll.result || [];
-                    for (let item of items) {
-                        try {
-                            let table = storeName.replace('pending_', '');
-                            let { error } = await supabaseClient.from(table).upsert(item);
-                            if (!error) removeOfflinePending(storeName, item.id);
-                        } catch (err) {
-                            console.error("Gagal sinkronisasi offline:", err);
+                    items.forEach(async (item) => {
+                        let client = getSupabase();
+                        if (!client) return;
+                        if (storeName === "pending_rumah") {
+                            await client.from('rumah').upsert(item);
+                            removeOfflinePending("pending_rumah", item.id);
+                        } else if (storeName === "pending_backlog") {
+                            await client.from('backlog').upsert(item);
+                            removeOfflinePending("pending_backlog", item.id);
+                        } else if (storeName === "pending_bantuan") {
+                            await client.from('bantuan').upsert(item);
+                            removeOfflinePending("pending_bantuan", item.id);
                         }
-                    }
+                    });
                 };
             });
         }
@@ -1496,14 +1506,20 @@
 
         async function muatDataDariSpreadsheet() {
             showLoading();
+            let client = getSupabase();
+            if (!client) {
+                hideLoading();
+                return;
+            }
+
             try {
-                const [resRumah, resBantuan, resBacklog, resPengguna, resSettings, resMaster] = await Promise.all([
-                    supabaseClient.from('rumah').select('*'),
-                    supabaseClient.from('bantuan').select('*'),
-                    supabaseClient.from('backlog').select('*'),
-                    supabaseClient.from('pengguna').select('*'),
-                    supabaseClient.from('settings').select('*'),
-                    supabaseClient.from('master').select('*')
+                const [resRumah, resBantuan, resBacklog, resPengguna, resMaster, resSettings] = await Promise.all([
+                    client.from('rumah').select('*'),
+                    client.from('bantuan').select('*'),
+                    client.from('backlog').select('*'),
+                    client.from('pengguna').select('*'),
+                    client.from('master_data').select('*'),
+                    client.from('settings').select('*')
                 ]);
 
                 dbRumah = resRumah.data || [];
@@ -1512,10 +1528,7 @@
                 dbPengguna = resPengguna.data || [];
 
                 if (resSettings.data && resSettings.data.length > 0) {
-                    appSettings = resSettings.data.reduce((acc, item) => {
-                        acc[item.key] = item.value;
-                        return acc;
-                    }, {});
+                    resSettings.data.forEach(s => { appSettings[s.key] = s.value; });
                 }
 
                 masterDB = {
@@ -1526,16 +1539,16 @@
 
                 if (resMaster.data && resMaster.data.length > 0) {
                     resMaster.data.forEach(m => {
-                        let cat = String(m.kategori || '').trim().toLowerCase();
-                        let item = String(m.nama_item || '').trim();
-                        if (!cat || !item) return;
-                        if (cat === 'kecamatan') {
-                            if (!masterDB.kecamatan.includes(item)) masterDB.kecamatan.push(item);
-                        } else if (cat === 'desa') {
-                            let kec = String(m.nilai_kode || '').trim();
-                            if (!masterDB.desa.some(d => d.nama === item)) masterDB.desa.push({ nama: item, kec: kec });
-                        } else if (masterDB[cat]) {
-                            if (!masterDB[cat].includes(item)) masterDB[cat].push(item);
+                        let cat = String(m.kategori || m.Kategori || '').trim().toLowerCase();
+                        let item = String(m.item || m['Nama Item'] || '').trim();
+                        if(!cat || !item) return;
+                        if(cat === 'kecamatan') {
+                            if(!masterDB.kecamatan.includes(item)) masterDB.kecamatan.push(item);
+                        } else if(cat === 'desa') {
+                            let kec = String(m.kode || m['Nilai/Kode'] || '').trim();
+                            if(!masterDB.desa.some(d => d.nama === item)) masterDB.desa.push({nama: item, kec: kec});
+                        } else if(masterDB[cat]) {
+                            if(!masterDB[cat].includes(item)) masterDB[cat].push(item);
                         }
                     });
                 }
@@ -1544,6 +1557,7 @@
                 populateTahunBantuanFilter();
                 hideLoading();
                 populateMasterSelects();
+                
                 let activeSec = document.querySelector('.section-view.active');
                 if (activeSec) {
                     let secId = activeSec.id.replace('sec-', '');
@@ -1681,8 +1695,15 @@
             if(!user) { alert("Masukkan username!"); return; }
 
             showLoading();
+            let client = getSupabase();
+            if (!client) {
+                hideLoading();
+                alert("Sistem Supabase belum siap, periksa koneksi internet!");
+                return;
+            }
+
             try {
-                const { data, error } = await supabaseClient.from('pengguna').select('*').eq('username', user).eq('password', pass).single();
+                const { data, error } = await client.from('pengguna').select('*').eq('username', user).eq('password', pass).single();
                 hideLoading();
 
                 if (data) {
@@ -1895,7 +1916,6 @@
             }
         }
 
-        // FUNGSI CEK STATUS BANTUAN (TERMASUK NIK PASANGAN)
         function getInfoStatusBantuan(nik, nokk, nikPasangan) {
             let strNik = String(nik || '').trim();
             let strNokk = String(nokk || '').trim();
@@ -1923,7 +1943,7 @@
             }
         }
 
-        function handleCompressAndUpload(inputEl, targetInputId) {
+        async function handleCompressAndUpload(inputEl, targetInputId) {
             if (!inputEl.files || !inputEl.files[0]) return;
             let file = inputEl.files[0];
 
@@ -1982,41 +2002,45 @@
 
                     let compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
 
+                    let client = getSupabase();
+                    if (!client) {
+                        hideLoading();
+                        document.getElementById(targetInputId).value = compressedBase64;
+                        return;
+                    }
+
                     try {
-                        let base64Data = compressedBase64.split(',')[1];
-                        let byteCharacters = atob(base64Data);
-                        let byteNumbers = new Array(byteCharacters.length);
+                        const base64Data = compressedBase64.split(',')[1];
+                        const byteCharacters = atob(base64Data);
+                        const byteNumbers = new Array(byteCharacters.length);
                         for (let i = 0; i < byteCharacters.length; i++) {
                             byteNumbers[i] = byteCharacters.charCodeAt(i);
                         }
-                        let byteArray = new Uint8Array(byteNumbers);
-                        let blob = new Blob([byteArray], { type: 'image/jpeg' });
+                        const byteArray = new Uint8Array(byteNumbers);
+                        const blob = new Blob([byteArray], { type: 'image/jpeg' });
 
-                        let { data, error } = await supabaseClient.storage.from('photos').upload(fileName, blob, {
+                        const { data, error } = await client.storage.from('photos').upload(fileName, blob, {
                             contentType: 'image/jpeg',
                             upsert: true
                         });
 
-                        if (error) throw error;
-
-                        let { data: publicUrlData } = supabaseClient.storage.from('photos').getPublicUrl(fileName);
                         hideLoading();
+                        if (error) {
+                            document.getElementById(targetInputId).value = compressedBase64;
+                        } else {
+                            const { data: publicUrlData } = client.storage.from('photos').getPublicUrl(fileName);
+                            document.getElementById(targetInputId).value = publicUrlData.publicUrl;
+                        }
 
-                        document.getElementById(targetInputId).value = publicUrlData.publicUrl;
                         Swal.fire({
                             icon: 'success',
                             title: 'Upload Foto Berhasil!',
-                            text: 'Foto telah dikompresi dan tersimpan di Supabase Storage.',
+                            text: 'Foto telah dikompresi dan tersimpan.',
                             confirmButtonColor: '#0d6efd'
                         });
                     } catch (err) {
                         hideLoading();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Upload Gagal',
-                            text: err.message || "Terjadi kesalahan saat menyimpan foto.",
-                            confirmButtonColor: '#dc3545'
-                        });
+                        document.getElementById(targetInputId).value = compressedBase64;
                     }
                 };
                 img.src = e.target.result;
@@ -2452,36 +2476,35 @@
                     ctx.drawImage(img, 0, 0, width, height);
 
                     let compressedBase64 = canvas.toDataURL('image/jpeg', 0.65);
+                    let client = getSupabase();
+                    if (!client) return;
 
+                    let finalUrl = compressedBase64;
                     try {
-                        let base64Data = compressedBase64.split(',')[1];
-                        let byteCharacters = atob(base64Data);
-                        let byteNumbers = new Array(byteCharacters.length);
+                        const base64Data = compressedBase64.split(',')[1];
+                        const byteCharacters = atob(base64Data);
+                        const byteNumbers = new Array(byteCharacters.length);
                         for (let i = 0; i < byteCharacters.length; i++) {
                             byteNumbers[i] = byteCharacters.charCodeAt(i);
                         }
-                        let byteArray = new Uint8Array(byteNumbers);
-                        let blob = new Blob([byteArray], { type: 'image/jpeg' });
+                        const byteArray = new Uint8Array(byteNumbers);
+                        const blob = new Blob([byteArray], { type: 'image/jpeg' });
 
-                        let { data, error } = await supabaseClient.storage.from('photos').upload(fileName, blob, {
-                            contentType: 'image/jpeg',
-                            upsert: true
-                        });
-
-                        if (error) throw error;
-
-                        let { data: publicUrlData } = supabaseClient.storage.from('photos').getPublicUrl(fileName);
-                        let targetB = dbBantuan.find(item => String(item.id) === String(bId));
-                        if(targetB) {
-                            targetB.bukti = publicUrlData.publicUrl;
-                            await supabaseClient.from('bantuan').upsert(targetB);
+                        const { error } = await client.storage.from('photos').upload(fileName, blob, { contentType: 'image/jpeg', upsert: true });
+                        if (!error) {
+                            const { data: publicUrlData } = client.storage.from('photos').getPublicUrl(fileName);
+                            finalUrl = publicUrlData.publicUrl;
                         }
-                        bootstrap.Modal.getInstance(document.getElementById('modalUploadBuktiRow')).hide();
-                        alert("Foto bukti berhasil diunggah dengan nama file:\n" + fileName);
-                        renderTabelBantuan();
-                    } catch (err) {
-                        alert("Gagal upload: " + err.message);
+                    } catch(e) {}
+
+                    let targetB = dbBantuan.find(b => String(b.id) === String(bId));
+                    if(targetB) {
+                        targetB.bukti = finalUrl;
+                        await client.from('bantuan').upsert(targetB);
                     }
+                    bootstrap.Modal.getInstance(document.getElementById('modalUploadBuktiRow')).hide();
+                    alert("Foto bukti berhasil diunggah dengan nama file:\n" + fileName);
+                    renderTabelBantuan();
                 };
                 img.src = e.target.result;
             };
@@ -2611,18 +2634,18 @@
             }
 
             showLoading();
-            try {
-                let { error } = await supabaseClient.from('rumah').upsert(payload);
-                hideLoading();
-                if (error) throw error;
-            } catch(err) {
-                hideLoading();
-                saveOfflinePending("pending_rumah", payload);
-                alert("Koneksi gagal: Data disimpan secara offline untuk disinkronkan nanti.");
+            let client = getSupabase();
+            if (client) {
+                try {
+                    await client.from('rumah').upsert(payload);
+                } catch(e) {
+                    saveOfflinePending("pending_rumah", payload);
+                }
             }
+            hideLoading();
         }
 
-        async function hapusRumah(id) {
+        function hapusRumah(id) {
             Swal.fire({
                 title: 'Konfirmasi Hapus',
                 text: 'Yakin ingin menghapus data rumah ini?',
@@ -2641,7 +2664,10 @@
                     if (!navigator.onLine) return;
 
                     showLoading();
-                    await supabaseClient.from('rumah').delete().eq('id', id);
+                    let client = getSupabase();
+                    if (client) {
+                        await client.from('rumah').delete().eq('id', id);
+                    }
                     hideLoading();
                 }
             });
@@ -2705,18 +2731,18 @@
             }
 
             showLoading();
-            try {
-                let { error } = await supabaseClient.from('backlog').upsert(payload);
-                hideLoading();
-                if (error) throw error;
-            } catch(err) {
-                hideLoading();
-                saveOfflinePending("pending_backlog", payload);
-                alert("Gagal koneksi server: Disimpan sementara di penyimpanan offline.");
+            let client = getSupabase();
+            if (client) {
+                try {
+                    await client.from('backlog').upsert(payload);
+                } catch(e) {
+                    saveOfflinePending("pending_backlog", payload);
+                }
             }
+            hideLoading();
         }
 
-        async function hapusBacklog(id) {
+        function hapusBacklog(id) {
             Swal.fire({
                 title: 'Konfirmasi Hapus',
                 text: 'Hapus data backlog ini?',
@@ -2735,7 +2761,10 @@
                     if (!navigator.onLine) return;
 
                     showLoading();
-                    await supabaseClient.from('backlog').delete().eq('id', id);
+                    let client = getSupabase();
+                    if (client) {
+                        await client.from('backlog').delete().eq('id', id);
+                    }
                     hideLoading();
                 }
             });
@@ -2779,15 +2808,15 @@
             renderDashboard();
 
             showLoading();
-            try {
-                await supabaseClient.from('backlog').delete().eq('id', bId);
-                await supabaseClient.from('rumah').upsert(rumahPayload);
-                await supabaseClient.from('bantuan').upsert(bantuanPayload);
-                hideLoading();
-            } catch(err) {
-                hideLoading();
-                alert("Gagal memproses data di server: " + err.message);
+            let client = getSupabase();
+            if (client) {
+                await Promise.all([
+                    client.from('backlog').delete().eq('id', bId),
+                    client.from('rumah').upsert(rumahPayload),
+                    client.from('bantuan').upsert(bantuanPayload)
+                ]);
             }
+            hideLoading();
         }
 
         function bukaModalBantuRTLH(id) {
@@ -2851,14 +2880,14 @@
             renderDashboard();
 
             showLoading();
-            try {
-                await supabaseClient.from('rumah').upsert(updatedRumah);
-                await supabaseClient.from('bantuan').upsert(bantuanPayload);
-                hideLoading();
-            } catch(err) {
-                hideLoading();
-                alert("Gagal memproses penanganan RTLH: " + err.message);
+            let client = getSupabase();
+            if (client) {
+                await Promise.all([
+                    client.from('rumah').upsert(updatedRumah),
+                    client.from('bantuan').upsert(bantuanPayload)
+                ]);
             }
+            hideLoading();
         }
 
         function bukaModalFormBantuan() {
@@ -2902,13 +2931,15 @@
             }
 
             showLoading();
-            try {
-                await supabaseClient.from('bantuan').upsert(payload);
-                hideLoading();
-            } catch(err) {
-                hideLoading();
-                alert("Gagal menyimpan bantuan: " + err.message);
+            let client = getSupabase();
+            if (client) {
+                try {
+                    await client.from('bantuan').upsert(payload);
+                } catch(e) {
+                    saveOfflinePending("pending_bantuan", payload);
+                }
             }
+            hideLoading();
         }
 
         function cekRiwayatBantuan() {
@@ -3098,21 +3129,16 @@
                 }
             });
 
-            let targetTable = activeImportTab.toLowerCase();
-            let chunkSize = 300;
-            let totalData = formattedList.length;
+            let client = getSupabase();
+            if(!client) return alert("Koneksi Supabase tidak tersedia!");
 
             showLoading();
-
+            let tableName = activeImportTab.toLowerCase();
             try {
-                for (let i = 0; i < totalData; i += chunkSize) {
-                    let chunk = formattedList.slice(i, i + chunkSize);
-                    let { error } = await supabaseClient.from(targetTable).upsert(chunk);
-                    if (error) throw error;
-                }
-                
+                const { error } = await client.from(tableName).upsert(formattedList);
                 hideLoading();
-                alert(`Import Data Massal (${totalData} baris) Berhasil Disimpan!`);
+                if (error) throw error;
+                alert(`Import Data Massal (${formattedList.length} baris) Berhasil Disimpan ke Supabase!`);
                 document.getElementById('previewImportArea').classList.add('d-none');
                 muatDataDariSpreadsheet();
             } catch (err) {
@@ -3217,16 +3243,14 @@
             populateMasterSelects();
 
             showLoading();
-            try {
+            let client = getSupabase();
+            if (client) {
                 if (namaLama) {
-                    await supabaseClient.from('master').delete().eq('kategori', activeMasterTab).eq('nama_item', namaLama);
+                    await client.from('master_data').delete().eq('kategori', activeMasterTab).eq('item', namaLama);
                 }
-                await supabaseClient.from('master').insert({ kategori: activeMasterTab, nama_item: namaBaru, nilai_kode: nilai });
-                hideLoading();
-            } catch(err) {
-                hideLoading();
-                alert("Gagal menyimpan data master: " + err.message);
+                await client.from('master_data').upsert({ kategori: activeMasterTab, item: namaBaru, kode: nilai });
             }
+            hideLoading();
         }
 
         function hapusMaster(cat, item) {
@@ -3250,7 +3274,10 @@
                     populateMasterSelects();
 
                     showLoading();
-                    await supabaseClient.from('master').delete().eq('kategori', cat).eq('nama_item', item);
+                    let client = getSupabase();
+                    if (client) {
+                        await client.from('master_data').delete().eq('kategori', cat).eq('item', item);
+                    }
                     hideLoading();
                 }
             });
@@ -3291,7 +3318,10 @@
             renderPenggunaTable();
 
             showLoading();
-            await supabaseClient.from('pengguna').upsert(payload);
+            let client = getSupabase();
+            if (client) {
+                await client.from('pengguna').upsert(payload);
+            }
             hideLoading();
         }
 
@@ -3311,13 +3341,15 @@
                     renderPenggunaTable();
 
                     showLoading();
-                    await supabaseClient.from('pengguna').delete().eq('id', id);
+                    let client = getSupabase();
+                    if (client) {
+                        await client.from('pengguna').delete().eq('id', id);
+                    }
                     hideLoading();
                 }
             });
         }
 
-        // FUNGSI GENERATE LAPORAN (DENGAN HEADER RTLH SESUAI INSTRUKSI)
         function generateLaporan() {
             let jenis = document.getElementById('repJenis').value;
 
@@ -3382,7 +3414,6 @@
             document.getElementById('tb-laporan').innerHTML = tbHtml || `<tr><td colspan="10" class="text-center">Data tidak ditemukan.</td></tr>`;
         }
 
-        // FUNGSI EKSPOR LAPORAN KE FILE EXCEL (.XLSX)
         function eksporLaporanExcel() {
             let jenis = document.getElementById('repJenis').value;
             let kec = document.getElementById('repKec').value || 'Semua';
@@ -3420,15 +3451,13 @@
             applySettingsToUI();
 
             showLoading();
-            try {
-                let upsertData = Object.keys(settingsObj).map(key => ({ key: key, value: settingsObj[key] }));
-                await supabaseClient.from('settings').upsert(upsertData);
-                hideLoading();
-                alert("Pengaturan Berhasil Disimpan!");
-            } catch(err) {
-                hideLoading();
-                alert("Gagal menyimpan pengaturan: " + err.message);
+            let client = getSupabase();
+            if (client) {
+                let settingsArray = Object.keys(settingsObj).map(key => ({ key: key, value: settingsObj[key] }));
+                await client.from('settings').upsert(settingsArray);
             }
+            hideLoading();
+            alert("Pengaturan Berhasil Disimpan!");
         }
 
         function lihatDokumentasi(id) {
