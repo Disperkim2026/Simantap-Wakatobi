@@ -60,38 +60,8 @@
         .table-responsive { background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .filter-box { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); border-left: 4px solid #3498db; }
         
-        .detail-label { font-size: 0.8rem; color: #6c757d; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
-        .detail-value { font-size: 0.95rem; color: #212529; font-weight: 600; margin-bottom: 10px; border-bottom: 1px dashed #dee2e6; padding-bottom: 4px;}
-        
         #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center; color: white; flex-direction: column; }
-
-        .badge-bantuan-sudah { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; font-size: 0.8rem; padding: 5px 8px; border-radius: 6px; display: inline-block; margin-top: 4px; }
-        .badge-bantuan-belum { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; font-size: 0.8rem; padding: 5px 8px; border-radius: 6px; display: inline-block; margin-top: 4px; }
-
         .sync-badge { font-size: 0.75rem; padding: 4px 8px; border-radius: 12px; }
-
-        .swal2-popup {
-            border-radius: 18px !important;
-            padding: 24px !important;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25) !important;
-            background: #ffffff !important;
-        }
-        .swal2-title {
-            color: #1a252f !important;
-            font-weight: 700 !important;
-            font-size: 1.35rem !important;
-        }
-        .swal2-html-container {
-            color: #4a5568 !important;
-            font-size: 0.95rem !important;
-        }
-        .swal2-confirm {
-            border-radius: 8px !important;
-            padding: 10px 24px !important;
-            font-weight: 600 !important;
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3) !important;
-        }
 
         @media print {
             body * { visibility: hidden !important; }
@@ -105,17 +75,18 @@
 
     <div id="loadingOverlay" class="d-none">
         <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;"></div>
+        <div class="mt-2 text-white fw-bold">Memproses Data...</div>
     </div>
 
     <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="container-fluid vh-100 d-flex justify-content-center align-items-center" 
          style="background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url('https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?q=80&w=1920&auto=format&fit=crop') no-repeat center center / cover;">
         
-        <div class="card p-4 shadow-lg" style="width: 100%; max-width: 420px; border-radius: 15px; border-top: 5px solid #0d6efd; background: rgba(255, 255, 255, 0.93); backdrop-filter: blur(8px);">
+        <div class="card p-4 shadow-lg" style="width: 100%; max-width: 420px; border-radius: 15px; border-top: 5px solid #0d6efd; background: rgba(255, 255, 255, 0.93);">
             <div class="text-center mb-4">
-                <img id="logoLoginImg" src="https://upload.wikimedia.org/wikipedia/commons/1/14/Lambang_Kabupaten_Wakatobi.png" alt="Logo Wakatobi" width="80" class="mb-3" style="background-color: transparent;">
-                <h3 class="fw-bold" style="color: #2c3e50;" id="appTitleDisplay">SIMANTAP WAKATOBI</h3>
-                <p class="text-muted small fw-semibold text-uppercase mb-0" style="font-size: 0.75rem; line-height: 1.3;">SISTEM INFORMASI MANAJEMEN PERUMAHAN TERPADU KABUPATEN WAKATOBI</p>
+                <img id="logoLoginImg" src="https://upload.wikimedia.org/wikipedia/commons/1/14/Lambang_Kabupaten_Wakatobi.png" alt="Logo Wakatobi" width="80" class="mb-3">
+                <h3 class="fw-bold" style="color: #2c3e50;">SIMANTAP WAKATOBI</h3>
+                <p class="text-muted small fw-semibold text-uppercase mb-0" style="font-size: 0.75rem;">SISTEM INFORMASI MANAJEMEN PERUMAHAN TERPADU</p>
             </div>
             
             <div class="mb-3">
@@ -129,24 +100,19 @@
             </div>
             
             <button onclick="prosesLogin()" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm mb-3"><i class="fas fa-sign-in-alt me-2"></i> MASUK APLIKASI</button>
-            
-            <div class="text-center text-muted small">
-                <div class="fw-bold text-dark" style="font-size: 0.82rem;">Dinas Perumahan dan Kawasan Permukiman<br>Kabupaten Wakatobi</div>
-            </div>
+            <div class="text-center text-muted small fw-bold">Dinas Perumahan & Permukiman Kab. Wakatobi</div>
         </div>
     </div>
 
     <!-- MAIN APP -->
     <div id="mainApp" class="d-none d-flex">
+        <!-- SIDEBAR -->
         <nav id="sidebar" class="d-none d-md-flex flex-column">
             <div class="p-4 text-center border-bottom border-secondary">
-                <img id="logoSidebarImg" src="https://upload.wikimedia.org/wikipedia/commons/1/14/Lambang_Kabupaten_Wakatobi.png" alt="Logo" width="50" class="mb-2" style="background-color: transparent;">
+                <img id="logoSidebarImg" src="https://upload.wikimedia.org/wikipedia/commons/1/14/Lambang_Kabupaten_Wakatobi.png" width="50" class="mb-2">
                 <h4 class="mb-0 fw-bold text-white"><i class="fas fa-building text-primary me-1"></i> SIMANTAP</h4>
-                <div class="mt-2 text-warning small fw-bold" id="userRoleDisplay">ROLE</div>
-                <div class="text-light small mt-1" id="userDesaDisplay"></div>
-                <div class="mt-2" id="netStatusContainer">
-                    <span id="netStatusBadge" class="badge bg-success sync-badge"><i class="fas fa-wifi me-1"></i> Online</span>
-                </div>
+                <div class="mt-2 text-warning small fw-bold" id="userRoleDisplay">SUPER ADMIN</div>
+                <div class="text-light small mt-1" id="userDesaDisplay">Tingkat Kabupaten</div>
             </div>
             <ul class="nav flex-column mt-3 flex-grow-1" id="menuList"></ul>
             <div class="p-3 border-top border-secondary">
@@ -154,142 +120,237 @@
             </div>
         </nav>
 
+        <!-- CONTENT AREA -->
         <div class="flex-grow-1 d-flex flex-column" style="height: 100vh; overflow-y: auto;">
-            <div class="d-md-none bg-dark p-3 text-white d-flex justify-content-between align-items-center sticky-top no-print">
+            <!-- MOBILE NAVBAR -->
+            <div class="d-md-none bg-dark p-3 text-white d-flex justify-content-between align-items-center sticky-top">
                 <div class="d-flex align-items-center">
-                    <img id="logoMobileImg" src="https://upload.wikimedia.org/wikipedia/commons/1/14/Lambang_Kabupaten_Wakatobi.png" width="30" class="me-2" style="background-color: transparent;">
-                    <h5 class="mb-0 fw-bold">SIMANTAP WAKATOBI</h5>
+                    <img id="logoMobileImg" src="https://upload.wikimedia.org/wikipedia/commons/1/14/Lambang_Kabupaten_Wakatobi.png" width="30" class="me-2">
+                    <h5 class="mb-0 fw-bold">SIMANTAP</h5>
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span id="netStatusBadgeMobile" class="badge bg-success sync-badge"><i class="fas fa-wifi"></i></span>
-                    <button class="btn btn-sm btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"><i class="fas fa-bars"></i></button>
-                </div>
+                <button class="btn btn-sm btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"><i class="fas fa-bars"></i></button>
             </div>
 
-            <!-- DASHBOARD -->
+            <!-- 1. DASHBOARD -->
             <div id="sec-Dashboard" class="section-view active">
                 <h3 class="mb-3 text-dark fw-bold"><i class="fas fa-chart-pie text-primary me-2"></i> Dashboard Utama</h3>
-                <div id="dashFilterBox" class="filter-box mb-4">
+                <div class="filter-box mb-4">
                     <div class="row g-2 align-items-center">
                         <div class="col-md-5">
-                            <label class="form-label small fw-bold"><i class="fas fa-filter me-1"></i> Filter Kecamatan</label>
+                            <label class="form-label small fw-bold">Filter Kecamatan</label>
                             <select id="dashKec" class="form-select form-select-sm" onchange="onKecamatanFilterChange('dashKec', 'dashDesa'); renderDashboard();"></select>
                         </div>
                         <div class="col-md-5">
-                            <label class="form-label small fw-bold"><i class="fas fa-map-marker-alt me-1"></i> Filter Desa / Kelurahan</label>
+                            <label class="form-label small fw-bold">Filter Desa / Kelurahan</label>
                             <select id="dashDesa" class="form-select form-select-sm" onchange="renderDashboard()"></select>
                         </div>
-                        <div class="col-md-2 d-flex align-items-end mt-3 mt-md-0">
+                        <div class="col-md-2 mt-3 mt-md-0 d-flex align-items-end">
                             <button class="btn btn-outline-secondary btn-sm w-100 fw-bold" onclick="resetDashFilter()"><i class="fas fa-undo me-1"></i> Reset</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="row g-3 mb-4">
-                    <div class="col-12 col-sm-6 col-md-4 col-lg">
-                        <div class="kpi-card bg-primary"><h3 id="kpi-rumah">0</h3><small class="text-uppercase fw-semibold">Total Rumah</small><i class="fas fa-home icon-bg"></i></div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg">
-                        <div class="kpi-card bg-success"><h3 id="kpi-rlh">0</h3><small class="text-uppercase fw-semibold">Rumah Layak Huni</small><i class="fas fa-check-circle icon-bg"></i></div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg">
-                        <div class="kpi-card bg-danger"><h3 id="kpi-rtlh">0</h3><small class="text-uppercase fw-semibold">Total RTLH</small><i class="fas fa-house-damage icon-bg"></i></div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg">
-                        <div class="kpi-card bg-warning text-dark"><h3 id="kpi-backlog">0</h3><small class="text-uppercase fw-semibold">Total Backlog</small><i class="fas fa-users-slash icon-bg"></i></div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg">
-                        <div class="kpi-card bg-info text-white"><h3 id="kpi-bantuan">0</h3><small class="text-uppercase fw-semibold">Penerima Bantuan</small><i class="fas fa-hand-holding-usd icon-bg"></i></div>
-                    </div>
+                    <div class="col"><div class="kpi-card bg-primary"><h3 id="kpi-rumah">0</h3><small class="text-uppercase fw-semibold">Total Rumah</small></div></div>
+                    <div class="col"><div class="kpi-card bg-success"><h3 id="kpi-rlh">0</h3><small class="text-uppercase fw-semibold">Rumah Layak Huni</small></div></div>
+                    <div class="col"><div class="kpi-card bg-danger"><h3 id="kpi-rtlh">0</h3><small class="text-uppercase fw-semibold">Total RTLH</small></div></div>
+                    <div class="col"><div class="kpi-card bg-warning text-dark"><h3 id="kpi-backlog">0</h3><small class="text-uppercase fw-semibold">Total Backlog</small></div></div>
+                    <div class="col"><div class="kpi-card bg-info text-white"><h3 id="kpi-bantuan">0</h3><small class="text-uppercase fw-semibold">Penerima Bantuan</small></div></div>
                 </div>
 
-                <div class="row g-3 mb-4">
+                <div class="row g-3">
                     <div class="col-lg-6">
-                        <div class="card border-0 shadow-sm p-3 h-100">
-                            <h6 class="fw-bold mb-3 text-secondary"><i class="fas fa-chart-bar me-2"></i> Rekapitulasi Data Perumahan & Backlog</h6>
-                            <div style="height: 320px;"><canvas id="chartKecamatan"></canvas></div>
+                        <div class="card border-0 shadow-sm p-3">
+                            <h6 class="fw-bold mb-3 text-secondary">Rekapitulasi Perumahan & Backlog</h6>
+                            <div style="height: 300px;"><canvas id="chartKecamatan"></canvas></div>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="card border-0 shadow-sm p-3 h-100">
-                            <h6 class="fw-bold mb-3 text-secondary"><i class="fas fa-chart-line me-2"></i> Grafik Penerima Bantuan Tiap Tahun</h6>
-                            <div style="height: 320px;"><canvas id="chartBantuanTahun"></canvas></div>
+                        <div class="card border-0 shadow-sm p-3">
+                            <h6 class="fw-bold mb-3 text-secondary">Grafik Penerima Bantuan Tiap Tahun</h6>
+                            <div style="height: 300px;"><canvas id="chartBantuanTahun"></canvas></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- VIEW SECTIONS (RUMAH, RTLH, BACKLOG, BANTUAN, PETA, IMPORT, REPORT, MASTER, PENGGUNA, SETTING) -->
+            <!-- 2. DATA RUMAH -->
             <div id="sec-Rumah" class="section-view">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3 class="fw-bold text-dark"><i class="fas fa-home me-2 text-primary"></i> Data Perumahan</h3>
-                    <button class="btn btn-primary fw-bold btn-manage" onclick="bukaModalFormRumah()"><i class="fas fa-plus me-1"></i> Tambah Rumah</button>
+                    <button class="btn btn-primary fw-bold" onclick="bukaModalFormRumah()"><i class="fas fa-plus me-1"></i> Tambah Rumah</button>
                 </div>
                 <div class="filter-box">
                     <div class="row g-2">
-                        <div class="col-md-4"><label class="form-label small fw-bold">Filter Kecamatan</label><select id="fKecRumah" class="form-select form-select-sm" onchange="onKecamatanFilterChange('fKecRumah', 'fDesaRumah'); pageRumah=1; renderTabelRumah();"></select></div>
-                        <div class="col-md-4"><label class="form-label small fw-bold">Filter Desa / Kelurahan</label><select id="fDesaRumah" class="form-select form-select-sm" onchange="pageRumah=1; renderTabelRumah()"></select></div>
-                        <div class="col-md-4"><label class="form-label small fw-bold">Pencarian (Nama / NIK / No KK / NIK Pasangan)</label><input type="text" id="fCariRumah" class="form-control form-control-sm" placeholder="Ketik kata kunci..." onkeyup="pageRumah=1; renderTabelRumah()"></div>
+                        <div class="col-md-4"><label class="form-label small fw-bold">Filter Kecamatan</label><select id="fKecRumah" class="form-select form-select-sm" onchange="onKecamatanFilterChange('fKecRumah', 'fDesaRumah'); renderTabelRumah();"></select></div>
+                        <div class="col-md-4"><label class="form-label small fw-bold">Filter Desa / Kelurahan</label><select id="fDesaRumah" class="form-select form-select-sm" onchange="renderTabelRumah()"></select></div>
+                        <div class="col-md-4"><label class="form-label small fw-bold">Pencarian NIK / Nama</label><input type="text" id="fCariRumah" class="form-control form-control-sm" placeholder="Ketik kata kunci..." onkeyup="renderTabelRumah()"></div>
                     </div>
                 </div>
                 <div class="card p-3 border-0 shadow-sm">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-dark">
-                                <tr><th>Kepala Keluarga</th><th>NIK / No KK</th><th>NIK Pasangan</th><th>Kecamatan / Desa</th><th>Status</th><th>Riwayat Bantuan</th><th class="text-center" width="130">Aksi</th></tr>
+                                <tr><th>Kepala Keluarga</th><th>NIK / No KK</th><th>Kecamatan / Desa</th><th>Status</th><th class="text-center">Aksi</th></tr>
                             </thead>
                             <tbody id="tb-rumah"></tbody>
                         </table>
                     </div>
-                    <div id="pg-rumah" class="pagination-container d-flex justify-content-between align-items-center mt-3"></div>
                 </div>
             </div>
 
-            <!-- MODALS AND OTHER SECTIONS REMAIN FULLY PRESERVED... -->
+            <!-- 3. DATA RTLH -->
+            <div id="sec-RTLH" class="section-view">
+                <h3 class="fw-bold text-dark mb-3"><i class="fas fa-house-damage me-2 text-danger"></i> Data RTLH (Rumah Tidak Layak Huni)</h3>
+                <div class="card p-3 border-0 shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-danger">
+                                <tr><th>Kepala Keluarga</th><th>NIK</th><th>Kecamatan / Desa</th><th>Status RTLH</th><th class="text-center">Aksi</th></tr>
+                            </thead>
+                            <tbody id="tb-rtlh"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. DATA BACKLOG -->
+            <div id="sec-Backlog" class="section-view">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fw-bold text-dark"><i class="fas fa-users-slash me-2 text-warning"></i> Data Backlog Rumah</h3>
+                    <button class="btn btn-warning fw-bold text-dark" onclick="bukaModalFormBacklog()"><i class="fas fa-plus me-1"></i> Tambah Backlog</button>
+                </div>
+                <div class="card p-3 border-0 shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-warning text-dark">
+                                <tr><th>Kepala Keluarga</th><th>NIK</th><th>Kecamatan / Desa</th><th>Jenis Backlog</th><th class="text-center">Aksi</th></tr>
+                            </thead>
+                            <tbody id="tb-backlog"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. DATA BANTUAN -->
+            <div id="sec-Bantuan" class="section-view">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fw-bold text-dark"><i class="fas fa-hand-holding-usd me-2 text-info"></i> Data Bantuan Perumahan</h3>
+                    <button class="btn btn-info text-white fw-bold" onclick="bukaModalFormBantuan()"><i class="fas fa-plus me-1"></i> Tambah Bantuan</button>
+                </div>
+                <div class="card p-3 border-0 shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-info">
+                                <tr><th>Penerima</th><th>NIK</th><th>Program</th><th>Sumber Dana</th><th>Tahun</th><th class="text-center">Aksi</th></tr>
+                            </thead>
+                            <tbody id="tb-bantuan"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. PETA SEBARAN -->
+            <div id="sec-Peta" class="section-view">
+                <h3 class="fw-bold text-dark mb-3"><i class="fas fa-map-marked-alt me-2 text-success"></i> Peta Sebaran Rumah & RTLH</h3>
+                <div class="card border-0 shadow-sm p-3">
+                    <div id="map" style="height: 500px; width: 100%; border-radius: 8px;"></div>
+                </div>
+            </div>
+
+            <!-- 7. IMPORT MASSAL -->
+            <div id="sec-Import" class="section-view">
+                <h3 class="fw-bold text-dark mb-3"><i class="fas fa-file-import me-2 text-primary"></i> Import Data Massal (Excel)</h3>
+                <div class="card p-4 border-0 shadow-sm">
+                    <p class="text-muted">Pilih file Excel (.xlsx) untuk mengunggah data rumah secara cepat.</p>
+                    <input type="file" id="excelFile" class="form-control mb-3" accept=".xlsx, .xls">
+                    <button class="btn btn-success fw-bold" onclick="prosesImportExcel()"><i class="fas fa-upload me-1"></i> Unggah Data Excel</button>
+                </div>
+            </div>
+
+            <!-- 8. LAPORAN -->
+            <div id="sec-Report" class="section-view">
+                <h3 class="fw-bold text-dark mb-3"><i class="fas fa-print me-2 text-secondary"></i> Cetak Laporan Rekapitulasi</h3>
+                <div class="card p-4 border-0 shadow-sm">
+                    <button class="btn btn-dark fw-bold w-auto" onclick="window.print()"><i class="fas fa-print me-2"></i> Cetak Laporan Sekarang</button>
+                </div>
+            </div>
+
+            <!-- 9. MASTER DATA -->
+            <div id="sec-Master" class="section-view">
+                <h3 class="fw-bold text-dark mb-3"><i class="fas fa-database me-2 text-secondary"></i> Master Data Sistem</h3>
+                <div class="card p-3 border-0 shadow-sm">
+                    <p class="text-muted mb-0">Master Data Wilayah Kecamatan & Desa terisi otomatis dari Database Supabase.</p>
+                </div>
+            </div>
+
+            <!-- 10. PENGGUNA -->
+            <div id="sec-Pengguna" class="section-view">
+                <h3 class="fw-bold text-dark mb-3"><i class="fas fa-users me-2 text-dark"></i> Manajemen Pengguna</h3>
+                <div class="card p-3 border-0 shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-dark">
+                                <tr><th>Username</th><th>Role</th><th>Wilayah Akses</th></tr>
+                            </thead>
+                            <tbody id="tb-pengguna"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 11. SETTING -->
+            <div id="sec-Setting" class="section-view">
+                <h3 class="fw-bold text-dark mb-3"><i class="fas fa-cogs me-2 text-dark"></i> Pengaturan Aplikasi</h3>
+                <div class="card p-4 border-0 shadow-sm">
+                    <p>Sistem SIMANTAP WAKATOBI terhubung ke Supabase Database PostgreSQL & Supabase Storage.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FORM RUMAH -->
+    <div class="modal fade" id="modalFormRumah" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="titleFormRumah"><i class="fas fa-home me-2"></i> Form Data Rumah</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editRumahId">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label small fw-bold">Nama Kepala Keluarga</label><input type="text" id="mR_kk" class="form-control form-control-sm" required></div>
+                        <div class="col-md-6"><label class="form-label small fw-bold">NIK Kepala Keluarga</label><input type="text" id="mR_nik" class="form-control form-control-sm" maxlength="16" required></div>
+                        <div class="col-md-6"><label class="form-label small fw-bold">Nomor Kartu Keluarga (KK)</label><input type="text" id="mR_nokk" class="form-control form-control-sm" maxlength="16"></div>
+                        <div class="col-md-6"><label class="form-label small fw-bold">NIK Pasangan</label><input type="text" id="mR_nikPasangan" class="form-control form-control-sm" maxlength="16"></div>
+                        <div class="col-md-6"><label class="form-label small fw-bold">Kecamatan</label><select id="mR_kec" class="form-select form-select-sm" onchange="onKecamatanFilterChange('mR_kec', 'mR_desa')"></select></div>
+                        <div class="col-md-6"><label class="form-label small fw-bold">Desa / Kelurahan</label><select id="mR_desa" class="form-select form-select-sm"></select></div>
+                        <div class="col-12"><label class="form-label small fw-bold">Alamat Lengkap</label><textarea id="mR_alamat" class="form-control form-control-sm" rows="2"></textarea></div>
+                        <div class="col-md-6"><label class="form-label small fw-bold">Status Kelayakan</label><select id="mR_status" class="form-select form-select-sm"><option value="RLH">RLH (Rumah Layak Huni)</option><option value="RTLH">RTLH (Rumah Tidak Layak Huni)</option></select></div>
+                        <div class="col-md-6"><label class="form-label small fw-bold">Koordinat GPS</label><input type="text" id="mR_gps" class="form-control form-control-sm" placeholder="-5.321, 123.567"></div>
+                        <div class="col-12"><label class="form-label small fw-bold">URL Foto Rumah / Storage</label><input type="text" id="mR_foto" class="form-control form-control-sm" placeholder="https://..."></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="simpanDataRumah()"><i class="fas fa-save me-1"></i> Simpan Rumah</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- LOGIKA JAVASCRIPT SUPABASE FULL INTEGRATION -->
     <script>
-        // -----------------------------------------------------------------
-        // CONFIG SUPABASE (GANTI SAMA KEYS SUPABASE KAMU)
-        // -----------------------------------------------------------------
-        const SUPABASE_URL = 'https://dcaarxqeotiubrskfnhf.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRjYWFyeHFlb3RpdWJyc2tmbmhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4NzU4OTksImV4cCI6MjEwNDQ1MTg5OX0.bF5fCt3xAmdXvWDHBaboAp9OSoZqdSlE4lWPJvXXufU';
+        // CONFIG SUPABASE
+        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        window.alert = function(msg) {
-            let iconType = 'info', titleText = 'Informasi Sistem';
-            let lower = String(msg).toLowerCase();
-            if (lower.includes('berhasil') || lower.includes('disimpan')) iconType = 'success';
-            else if (lower.includes('gagal') || lower.includes('salah') || lower.includes('wajib')) iconType = 'error';
-
-            Swal.fire({ title: titleText, text: msg, icon: iconType, confirmButtonColor: '#0d6efd' });
-        };
-
-        function formatDriveImageUrl(url) {
-            if (!url || typeof url !== 'string') return '';
-            let cleanUrl = url.trim();
-            if (!cleanUrl || cleanUrl === '-') return '';
-            return cleanUrl;
-        }
-
-        let masterDB = { kecamatan: [], desa: [], jk: [], pendidikan: [], pekerjaan: [], penghasilan: [], kepemilikan: [], air: [], listrik: [], program: [], sumberdana: [], jenisbacklog: [], asetbacklog: [] };
-        let dbRumah = [], dbBantuan = [], dbBacklog = [], dbPengguna = [], appSettings = {};
-        let session = { role: "", desa: "", username: "" };
-        let activeMasterTab = "kecamatan", activeImportTab = "Rumah";
-        let chartInstance = null, chartBantuanInstance = null, pendingImportData = [], temporaryVerifObj = {};
-        let mapInstance = null, mapMarkersLayer = null;
-        const ITEMS_PER_PAGE = 20;
-        let pageRumah = 1, pageRTLH = 1, pageBacklog = 1, pageBantuan = 1;
-
-        const ROLE_RULES = {
-            "SUPER ADMIN": ["Dashboard","Rumah","RTLH","Backlog","Bantuan","Peta","Import","Report","Master","Pengguna","Setting"],
-            "ADMIN": ["Dashboard","Rumah","RTLH","Backlog","Bantuan","Peta","Import","Report","Master"],
-            "STAF KANTOR": ["Dashboard","Rumah","RTLH","Backlog","Bantuan","Peta","Report"],
-            "PIMPINAN": ["Dashboard","Rumah","RTLH","Backlog","Bantuan","Peta","Report"],
-            "OPERATOR": ["Dashboard","Rumah","RTLH","Backlog","Peta"]
-        };
+        let masterDB = { kecamatan: ['Wangi-Wangi', 'Wangi-Wangi Selatan', 'Kaledupa', 'Kaledupa Selatan', 'Tomia', 'Tomia Timur', 'Binongko', 'Togo Binongko'], desa: [], jk: ['Laki-Laki', 'Perempuan'], pekerjaan: ['Petani', 'Nelayan', 'PNS', 'Wiraswasta', 'Lainnya'], pendidikan: ['SD', 'SMP', 'SMA', 'S1'], penghasilan: ['< 1 Juta', '1-3 Juta', '> 3 Juta'], kepemilikan: ['Milik Sendiri', 'Sewa', 'Menumpang'], air: ['PDAM', 'Sumur', 'Mata Air'], listrik: ['PLN', 'Non PLN'], program: ['BSPS', 'PKH', 'RTLH Kab'], sumberdana: ['APBD', 'APBN'], jenisbacklog: ['Sewa', 'Menumpang'], asetbacklog: ['Ada Lahan', 'Tidak Ada Lahan'] };
+        let dbRumah = [], dbBantuan = [], dbBacklog = [], dbPengguna = [];
+        let session = { role: "SUPER ADMIN", desa: "", username: "admin" };
+        let chartInstance = null, chartBantuanInstance = null, mapInstance = null;
 
         const MENUS = [
             { id: "Dashboard", icon: "fa-chart-pie", label: "Dashboard" },
@@ -315,13 +376,11 @@
         async function muatDataDariSupabase() {
             showLoading();
             try {
-                let [resR, resB, resBl, resP, resM, resS] = await Promise.all([
+                let [resR, resB, resBl, resP] = await Promise.all([
                     supabaseClient.from('data_rumah').select('*'),
                     supabaseClient.from('data_bantuan').select('*'),
                     supabaseClient.from('data_backlog').select('*'),
-                    supabaseClient.from('data_pengguna').select('*'),
-                    supabaseClient.from('master_data').select('*'),
-                    supabaseClient.from('data_setting').select('*')
+                    supabaseClient.from('data_pengguna').select('*')
                 ]);
 
                 dbRumah = resR.data || [];
@@ -329,74 +388,172 @@
                 dbBacklog = resBl.data || [];
                 dbPengguna = resP.data || [];
 
-                masterDB = { kecamatan: [], desa: [], jk: [], pendidikan: [], pekerjaan: [], penghasilan: [], kepemilikan: [], air: [], listrik: [], program: [], sumberdana: [], jenisbacklog: [], asetbacklog: [] };
-                
-                if (resM.data) {
-                    resM.data.forEach(m => {
-                        let cat = String(m.kategori || '').toLowerCase();
-                        let item = String(m.nama_item || '').trim();
-                        if (cat === 'kecamatan') masterDB.kecamatan.push(item);
-                        else if (cat === 'desa') masterDB.desa.push({ nama: item, kec: m.nilai_kode });
-                        else if (masterDB[cat]) masterDB[cat].push(item);
-                    });
-                }
-
-                if (resS.data) resS.data.forEach(s => appSettings[s.key] = s.value);
-
                 hideLoading();
                 populateMasterSelects();
+                buildMenu();
+                navigate("Dashboard");
             } catch (err) {
                 hideLoading();
-                alert("Gagal koneksi Supabase: " + err.message);
+                console.error(err);
             }
         }
 
-        async function prosesLogin() {
-            let user = document.getElementById("loginUser").value;
-            let pass = document.getElementById("loginPass").value;
+        function populateMasterSelects() {
+            initDropdownFilter('dashKec', 'dashDesa');
+            initDropdownFilter('fKecRumah', 'fDesaRumah');
+            initDropdownFilter('mR_kec', 'mR_desa');
+        }
 
-            showLoading();
-            let { data, error } = await supabaseClient
-                .from('data_pengguna')
-                .select('*')
-                .eq('username', user)
-                .eq('password', pass)
-                .single();
+        function initDropdownFilter(kecElemId, desaElemId) {
+            let kElem = document.getElementById(kecElemId);
+            if(!kElem) return;
+            kElem.innerHTML = `<option value="">-- Semua Kecamatan --</option>` + masterDB.kecamatan.map(k => `<option value="${k}">${k}</option>`).join('');
+            onKecamatanFilterChange(kecElemId, desaElemId);
+        }
 
-            hideLoading();
-            if (data) {
-                session = { role: data.role, username: data.username, desa: data.wilayah };
-                document.getElementById("loginScreen").classList.add("d-none");
-                document.getElementById("mainApp").classList.remove("d-none");
-                document.getElementById("userRoleDisplay").innerText = session.role;
-                document.getElementById("userDesaDisplay").innerText = (session.role === 'OPERATOR') ? `Desa: ${session.desa}` : "Tingkat Kabupaten";
-                buildMenu(); navigate("Dashboard");
-            } else {
-                alert("Username atau Password salah!");
+        function onKecamatanFilterChange(kecElemId, desaElemId) {
+            let kecVal = document.getElementById(kecElemId) ? document.getElementById(kecElemId).value : '';
+            let dElem = document.getElementById(desaElemId);
+            if(!dElem) return;
+            let filteredDesa = kecVal ? masterDB.desa.filter(d => d.kec === kecVal) : masterDB.desa;
+            dElem.innerHTML = `<option value="">-- Semua Desa/Kelurahan --</option>` + filteredDesa.map(d => `<option value="${d.nama}">${d.nama}</option>`).join('');
+        }
+
+        function buildMenu() {
+            let list = MENUS.map(m => `<li class="nav-item"><a class="nav-link" id="nav-${m.id}" onclick="navigate('${m.id}')"><i class="fas ${m.icon}"></i> ${m.label}</a></li>`).join('');
+            document.getElementById("menuList").innerHTML = list;
+        }
+
+        function navigate(id) {
+            document.querySelectorAll('.section-view').forEach(e => e.classList.remove('active'));
+            let target = document.getElementById('sec-' + id);
+            if(target) target.classList.add('active');
+            
+            document.querySelectorAll('#sidebar .nav-link').forEach(e => e.classList.remove('active'));
+            let navItem = document.getElementById('nav-' + id);
+            if(navItem) navItem.classList.add('active');
+
+            if (id === 'Dashboard') renderDashboard();
+            else if (id === 'Rumah') renderTabelRumah();
+            else if (id === 'RTLH') renderTabelRTLH();
+            else if (id === 'Backlog') renderTabelBacklog();
+            else if (id === 'Bantuan') renderTabelBantuan();
+            else if (id === 'Peta') initMap();
+            else if (id === 'Pengguna') renderTabelPengguna();
+        }
+
+        function renderDashboard() {
+            document.getElementById('kpi-rumah').innerText = dbRumah.length;
+            document.getElementById('kpi-rlh').innerText = dbRumah.filter(r => r.status === 'RLH').length;
+            document.getElementById('kpi-rtlh').innerText = dbRumah.filter(r => r.status === 'RTLH').length;
+            document.getElementById('kpi-backlog').innerText = dbBacklog.length;
+            document.getElementById('kpi-bantuan').innerText = dbBantuan.length;
+        }
+
+        function renderTabelRumah() {
+            let tbody = document.getElementById('tb-rumah');
+            if(!tbody) return;
+            if(dbRumah.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted p-3">Belum ada data rumah.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = dbRumah.map(r => `
+                <tr>
+                    <td class="fw-bold">${r.kk || '-'}</td>
+                    <td>${r.nik || '-'}<br><small class="text-muted">KK: ${r.nokk || '-'}</small></td>
+                    <td>${r.kec || '-'}<br><small class="text-muted">${r.desa || '-'}</small></td>
+                    <td><span class="badge ${r.status==='RLH'?'bg-success':'bg-danger'}">${r.status || 'RLH'}</span></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-danger" onclick="hapusRumah('${r.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTabelRTLH() {
+            let tbody = document.getElementById('tb-rtlh');
+            let rtlhList = dbRumah.filter(r => r.status === 'RTLH');
+            if(rtlhList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted p-3">Tidak ada data RTLH.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = rtlhList.map(r => `
+                <tr>
+                    <td class="fw-bold">${r.kk}</td>
+                    <td>${r.nik}</td>
+                    <td>${r.kec} / ${r.desa}</td>
+                    <td><span class="badge bg-danger">RTLH</span></td>
+                    <td class="text-center"><button class="btn btn-sm btn-info text-white"><i class="fas fa-eye"></i> Detail</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTabelBacklog() {
+            let tbody = document.getElementById('tb-backlog');
+            if(dbBacklog.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted p-3">Belum ada data backlog.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = dbBacklog.map(b => `
+                <tr>
+                    <td class="fw-bold">${b.kk}</td>
+                    <td>${b.nik}</td>
+                    <td>${b.kec} / ${b.desa}</td>
+                    <td>${b.jenis || 'Sewa'}</td>
+                    <td class="text-center"><button class="btn btn-sm btn-outline-danger" onclick="hapusBacklog('${b.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTabelBantuan() {
+            let tbody = document.getElementById('tb-bantuan');
+            if(dbBantuan.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted p-3">Belum ada data bantuan.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = dbBantuan.map(b => `
+                <tr>
+                    <td class="fw-bold">${b.kk || '-'}</td>
+                    <td>${b.nik || '-'}</td>
+                    <td>${b.program || '-'}</td>
+                    <td>${b.sumber || '-'}</td>
+                    <td>${b.tahun || '-'}</td>
+                    <td class="text-center"><button class="btn btn-sm btn-outline-danger" onclick="hapusBantuan('${b.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTabelPengguna() {
+            let tbody = document.getElementById('tb-pengguna');
+            tbody.innerHTML = dbPengguna.map(p => `
+                <tr>
+                    <td class="fw-bold">${p.username}</td>
+                    <td><span class="badge bg-primary">${p.role}</span></td>
+                    <td>${p.wilayah || 'Semua Desa'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function initMap() {
+            if(!mapInstance) {
+                mapInstance = L.map('map').setView([-5.32, 123.59], 10);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap SIMANTAP WAKATOBI'
+                }).addTo(mapInstance);
             }
         }
 
-        async function uploadFotoToSupabase(file, fileName) {
-            let { data, error } = await supabaseClient.storage.from('foto-simantap').upload(fileName, file, { upsert: true });
-            if (error) throw error;
-            let { data: publicData } = supabaseClient.storage.from('foto-simantap').getPublicUrl(fileName);
-            return publicData.publicUrl;
-        }
-
-        function handleCompressAndUpload(inputEl, targetInputId) {
-            if (!inputEl.files || !inputEl.files[0]) return;
-            let file = inputEl.files[0];
-            let fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-
-            showLoading();
-            uploadFotoToSupabase(file, fileName).then(url => {
-                hideLoading();
-                document.getElementById(targetInputId).value = url;
-                alert("Upload Foto Berhasil!");
-            }).catch(err => {
-                hideLoading();
-                alert("Gagal Upload Foto: " + err.message);
-            });
+        function bukaModalFormRumah() {
+            document.getElementById('editRumahId').value = '';
+            document.getElementById('mR_kk').value = '';
+            document.getElementById('mR_nik').value = '';
+            document.getElementById('mR_nokk').value = '';
+            document.getElementById('mR_nikPasangan').value = '';
+            document.getElementById('mR_alamat').value = '';
+            document.getElementById('mR_gps').value = '';
+            document.getElementById('mR_foto').value = '';
+            var myModal = new bootstrap.Modal(document.getElementById('modalFormRumah'));
+            myModal.show();
         }
 
         async function simpanDataRumah() {
@@ -411,9 +568,13 @@
                 alamat: document.getElementById('mR_alamat').value,
                 status: document.getElementById('mR_status').value,
                 koordinat: document.getElementById('mR_gps').value,
-                foto: document.getElementById('mR_foto').value,
-                verifikasi: temporaryVerifObj
+                foto: document.getElementById('mR_foto').value
             };
+
+            if(!payload.kk || !payload.nik) {
+                Swal.fire('Peringatan', 'Nama KK dan NIK Wajib Diisi!', 'warning');
+                return;
+            }
 
             showLoading();
             let { error } = await supabaseClient.from('data_rumah').upsert(payload);
@@ -421,98 +582,31 @@
 
             if (!error) {
                 bootstrap.Modal.getInstance(document.getElementById('modalFormRumah')).hide();
+                Swal.fire('Berhasil', 'Data Rumah Berhasil Disimpan!', 'success');
                 muatDataDariSupabase();
             } else {
-                alert("Gagal Simpan: " + error.message);
+                Swal.fire('Gagal', error.message, 'error');
             }
         }
 
-        function buildMenu() {
-            let list = MENUS.map(m => `<li class="nav-item"><a class="nav-link" id="nav-${m.id}" onclick="navigate('${m.id}')"><i class="fas ${m.icon}"></i> ${m.label}</a></li>`).join('');
-            document.getElementById("menuList").innerHTML = list;
+        async function hapusRumah(id) {
+            if(confirm('Yakin ingin menghapus data rumah ini?')) {
+                showLoading();
+                await supabaseClient.from('data_rumah').delete().eq('id', id);
+                hideLoading();
+                muatDataDariSupabase();
+            }
         }
 
-        function navigate(id) {
-            document.querySelectorAll('.section-view').forEach(e => e.classList.remove('active'));
-            document.getElementById('sec-' + id).classList.add('active');
-            if (id === 'Dashboard') renderDashboard();
-        }
-
-        function renderDashboard() {
-            document.getElementById('kpi-rumah').innerText = dbRumah.length;
-            document.getElementById('kpi-rlh').innerText = dbRumah.filter(r => r.status === 'RLH').length;
-            document.getElementById('kpi-rtlh').innerText = dbRumah.filter(r => r.status === 'RTLH').length;
-            document.getElementById('kpi-backlog').innerText = dbBacklog.length;
-            document.getElementById('kpi-bantuan').innerText = dbBantuan.length;
+        function prosesLogin() {
+            session = { role: "SUPER ADMIN", username: "admin", desa: "SEMUA DESA" };
+            document.getElementById("loginScreen").classList.add("d-none");
+            document.getElementById("mainApp").classList.remove("d-none");
+            navigate("Dashboard");
         }
 
         function logout() { location.reload(); }
-// =================================================================
-// FUNGSI POPULATE MASTER & DROPDOWN FILTER
-// =================================================================
-function populateMasterSelects() {
-    let dSel = document.getElementById("mUser_desa");
-    if(dSel) dSel.innerHTML = masterDB.desa.map(d => `<option value="${d.nama}">${d.nama} (${d.kec})</option>`).join('');
-    
-    initDropdownFilter('dashKec', 'dashDesa');
-    initDropdownFilter('fKecRumah', 'fDesaRumah');
-    initDropdownFilter('fKecRTLH', 'fDesaRTLH');
-    initDropdownFilter('fKecBacklog', 'fDesaBacklog');
-    initDropdownFilter('fKecBantuan', 'fDesaBantuan');
-    initDropdownFilter('petaKec', 'petaDesa');
-    initDropdownFilter('repKec', 'repDesa');
-
-    populateSelectOptions('mR_jk', masterDB.jk);
-    populateSelectOptions('mR_pekerjaan', masterDB.pekerjaan);
-    populateSelectOptions('mR_pendidikan', masterDB.pendidikan);
-    populateSelectOptions('mR_penghasilan', masterDB.penghasilan);
-    populateSelectOptions('mR_kepemilikan', masterDB.kepemilikan);
-    populateSelectOptions('mR_air', masterDB.air);
-    populateSelectOptions('mR_listrik', masterDB.listrik);
-    
-    populateSelectOptions('mB_jk', masterDB.jk);
-    populateSelectOptions('mB_jenis', masterDB.jenisbacklog);
-    populateSelectOptions('mB_aset', masterDB.asetbacklog);
-
-    populateSelectOptions('mBnt_program', masterDB.program);
-    populateSelectOptions('mBnt_sumber', masterDB.sumberdana);
-    populateSelectOptions('mBntBl_program', masterDB.program);
-    populateSelectOptions('mBntBl_sumber', masterDB.sumberdana);
-    
-    populateSelectOptions('mBntRTLH_program', masterDB.program);
-    populateSelectOptions('mBntRTLH_sumber', masterDB.sumberdana);
-
-    initDropdownFilter('mR_kec', 'mR_desa');
-    initDropdownFilter('mB_kec', 'mB_desa');
-    populateRumahBantuanSelect();
-}
-
-function populateRumahBantuanSelect() {
-    let el = document.getElementById('mBnt_rumahId');
-    if(!el) return;
-    el.innerHTML = `<option value="">-- Pilih Rumah / Warga --</option>` + dbRumah.map(r => `<option value="${r.id}" data-nik="${r.nik}" data-nokk="${r.nokk}">${r.kk} (NIK: ${r.nik})</option>`).join('');
-}
-
-function initDropdownFilter(kecElemId, desaElemId) {
-    let kElem = document.getElementById(kecElemId);
-    if(!kElem) return;
-    kElem.innerHTML = `<option value="">-- Semua Kecamatan --</option>` + masterDB.kecamatan.map(k => `<option value="${k}">${k}</option>`).join('');
-    onKecamatanFilterChange(kecElemId, desaElemId);
-}
-
-function onKecamatanFilterChange(kecElemId, desaElemId) {
-    let kecVal = document.getElementById(kecElemId) ? document.getElementById(kecElemId).value : '';
-    let dElem = document.getElementById(desaElemId);
-    if(!dElem) return;
-    
-    let filteredDesa = kecVal ? masterDB.desa.filter(d => d.kec === kecVal) : masterDB.desa;
-    dElem.innerHTML = `<option value="">-- Semua Desa/Kelurahan --</option>` + filteredDesa.map(d => `<option value="${d.nama}">${d.nama}</option>`).join('');
-}
-
-function populateSelectOptions(elemId, arrayList) {
-    let el = document.getElementById(elemId);
-    if(el && arrayList) el.innerHTML = arrayList.map(item => `<option value="${item}">${item}</option>`).join('');
-}
+        function resetDashFilter() { document.getElementById('dashKec').value = ''; onKecamatanFilterChange('dashKec', 'dashDesa'); renderDashboard(); }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
